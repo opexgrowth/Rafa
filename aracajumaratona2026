@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Checkpoint — Governança Médica | Maratona de Aracaju 2026</title>
+<style>
+  :root{
+    --azul-900:#0d1b3d;
+    --azul-800:#13265a;
+    --azul-700:#1b3a7a;
+    --azul-600:#2554a8;
+    --dourado:#c9a227;
+    --verde:#1f8a4c;
+    --verde-bg:#e8f6ee;
+    --amarelo:#b8860b;
+    --amarelo-bg:#fff8e6;
+    --vermelho:#c0392b;
+    --vermelho-bg:#fdecea;
+    --roxo:#6b3fa0;
+    --roxo-bg:#f2ecfa;
+    --cinza-100:#f4f5f7;
+    --cinza-200:#e6e8ec;
+    --cinza-500:#6b7280;
+    --texto:#1a1f2b;
+    --branco:#ffffff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI', Arial, sans-serif;
+    background:var(--cinza-100);
+    color:var(--texto);
+    line-height:1.55;
+  }
+
+  /* ===== GATE DE SENHA ===== */
+  #gate{
+    position:fixed;inset:0;
+    background:linear-gradient(135deg,var(--azul-900),var(--azul-700));
+    display:flex;align-items:center;justify-content:center;
+    z-index:999;
+    padding:20px;
+  }
+  #gate .box{
+    background:#fff;
+    border-radius:12px;
+    padding:36px 32px;
+    max-width:380px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 10px 40px rgba(0,0,0,.3);
+  }
+  #gate h2{margin:0 0 6px 0;color:var(--azul-900);font-size:1.2rem;}
+  #gate p{font-size:.85rem;color:var(--cinza-500);margin:0 0 20px 0;}
+  #gate input{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid var(--cinza-200);
+    border-radius:8px;
+    font-size:.95rem;
+    margin-bottom:12px;
+  }
+  #gate button{
+    width:100%;
+    padding:12px;
+    background:var(--azul-700);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    font-size:.95rem;
+    font-weight:600;
+    cursor:pointer;
+  }
+  #gate button:hover{background:var(--azul-800);}
+  #gate .err{color:var(--vermelho);font-size:.8rem;margin-top:10px;display:none;}
+  #content{display:none;}
+
+  .topbar{
+    background:linear-gradient(135deg,var(--azul-900),var(--azul-700));
+    color:#fff;
+    padding:28px 24px;
+  }
+  .topbar-inner{
+    max-width:1000px;
+    margin:0 auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .topbar h1{
+    margin:0 0 6px 0;
+    font-size:1.5rem;
+    letter-spacing:.3px;
+  }
+  .topbar .sub{
+    font-size:.9rem;
+    opacity:.85;
+  }
+  .badge-private{
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.35);
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:.75rem;
+    white-space:nowrap;
+  }
+  .note-banner{
+    max-width:1000px;
+    margin:18px auto 0 auto;
+    padding:14px 18px;
+    background:var(--amarelo-bg);
+    border:1px solid #f0d78a;
+    border-left:4px solid var(--amarelo);
+    border-radius:6px;
+    font-size:.92rem;
+    color:#5c4813;
+  }
+  .container{
+    max-width:1000px;
+    margin:0 auto;
+    padding:24px;
+  }
+  .legend-row{
+    display:flex;gap:14px;flex-wrap:wrap;
+    margin-bottom:20px;
+    font-size:.78rem;
+    color:var(--cinza-500);
+  }
+  .legend-row span{display:flex;align-items:center;gap:6px;}
+  .legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+
+  .progress-card{
+    background:#fff;
+    border:1px solid var(--cinza-200);
+    border-radius:10px;
+    padding:18px 22px;
+    margin-bottom:28px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  .progress-ring{
+    font-size:2rem;
+    font-weight:700;
+    color:var(--azul-700);
+    min-width:70px;
+  }
+  .progress-bar-outer{
+    flex:1;
+    min-width:200px;
+    height:10px;
+    background:var(--cinza-200);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .progress-bar-inner{
+    height:100%;
+    background:linear-gradient(90deg,var(--verde),#27ae60);
+    width:23%;
+  }
+  .progress-label{
+    font-size:.85rem;
+    color:var(--cinza-500);
+  }
+  h2.section-title{
+    font-size:1.15rem;
+    color:var(--azul-900);
+    border-bottom:2px solid var(--azul-700);
+    padding-bottom:8px;
+    margin:36px 0 16px 0;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .owner-tag{
+    font-size:.65rem;
+    font-weight:700;
+    padding:3px 10px;
+    border-radius:12px;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+  }
+  .owner-tag.rafael{background:var(--roxo-bg);color:var(--roxo);}
+  .owner-tag.neto{background:#e8f0fe;color:var(--azul-700);}
+
+  .item{
+    background:#fff;
+    border:1px solid var(--cinza-200);
+    border-radius:8px;
+    margin-bottom:12px;
+    overflow:hidden;
+  }
+  .item.rafael{border-left:4px solid var(--roxo);}
+  .item.neto{border-left:4px solid var(--azul-600);}
+  .item-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 16px;
+    flex-wrap:wrap;
+  }
+  .status-dot{
+    width:12px;height:12px;border-radius:50%;
+    flex-shrink:0;
+  }
+  .status-dot.ok{background:var(--verde);}
+  .status-dot.pending{background:var(--amarelo);}
+  .status-dot.blocked{background:var(--vermelho);}
+  .item-q{
+    font-weight:600;
+    font-size:.98rem;
+    flex:1;
+    min-width:200px;
+  }
+  .status-tag{
+    font-size:.72rem;
+    padding:3px 10px;
+    border-radius:12px;
+    font-weight:600;
+    white-space:nowrap;
+  }
+  .status-tag.ok{background:var(--verde-bg);color:var(--verde);}
+  .status-tag.pending{background:var(--amarelo-bg);color:var(--amarelo);}
+  .item-body{
+    padding:0 16px 16px 40px;
+    font-size:.92rem;
+    color:#333;
+  }
+  .item-body .answer{
+    background:var(--verde-bg);
+    border-left:3px solid var(--verde);
+    padding:10px 14px;
+    border-radius:4px;
+    margin-top:4px;
+  }
+  .item-body ul{margin:6px 0;padding-left:20px;}
+  .known-box{
+    background:#eef2fb;
+    border-left:3px solid var(--azul-600);
+    padding:10px 14px;
+    border-radius:4px;
+    font-size:.88rem;
+    margin-top:8px;
+    color:#1b2e5c;
+  }
+  .flag-box{
+    background:var(--vermelho-bg);
+    border-left:3px solid var(--vermelho);
+    padding:10px 14px;
+    border-radius:4px;
+    font-size:.88rem;
+    margin-top:8px;
+    color:#7a241c;
+  }
+  table.data-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+    font-size:.85rem;
+  }
+  table.data-table th, table.data-table td{
+    border:1px solid var(--cinza-200);
+    padding:6px 10px;
+    text-align:left;
+  }
+  table.data-table th{
+    background:var(--cinza-100);
+  }
+  .footer-note{
+    margin-top:40px;
+    padding:20px;
+    background:#fff;
+    border:1px solid var(--cinza-200);
+    border-radius:8px;
+    font-size:.85rem;
+    color:var(--cinza-500);
+    text-align:center;
+  }
+  .footer-note strong{color:var(--azul-800);}
+  .layout-lock{
+    margin-top:14px;
+    padding:12px 16px;
+    background:var(--roxo-bg);
+    border-radius:6px;
+    font-size:.8rem;
+    color:#4a2a70;
+  }
+
+  @media print{
+    #gate{display:none !important;}
+    #content{display:block !important;}
+    body{background:#fff;}
+    .note-banner, .topbar .badge-private{display:none;}
+    .item{break-inside:avoid;}
+    .topbar{background:var(--azul-900) !important; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="box">
+    <h2>🔒 Acesso restrito</h2>
+    <p>Checkpoint de governança médica — Maratona de Aracaju 2026</p>
+    <input type="password" id="pwd" placeholder="Digite a senha" autocomplete="off">
+    <button onclick="checkPwd()">Entrar</button>
+    <div class="err" id="err">Senha incorreta. Tente novamente.</div>
+  </div>
+</div>
+
+<div id="content">
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div>
+      <h1>Maratona de Aracaju 2026 — Governança Médica</h1>
+      <div class="sub">Checkpoint de acompanhamento · Dr. Rafael Gonçalves (CRM-SE 4707)</div>
+    </div>
+    <div class="badge-private">🔒 Acesso restrito por senha</div>
+  </div>
+</div>
+
+<div class="note-banner">
+  Esta página reúne as definições já fechadas e as pendências em aberto para estruturar o plano de governança médica e assistencial da <strong>Maratona de Aracaju 2026</strong> (31/10 e 01/11/2026), no modelo aplicado na MDR26 (Maratona do Rio). <strong>Não é necessário responder por aqui</strong> — para cada pendência marcada com a tag roxa "Dr. Rafael", basta enviar a resposta para o Neto (WhatsApp/mensagem) que a página é atualizada.
+</div>
+
+<div class="container">
+
+  <div class="legend-row">
+    <span><span class="legend-dot" style="background:var(--roxo);"></span> Pendência técnica/clínica — Dr. Rafael</span>
+    <span><span class="legend-dot" style="background:var(--azul-600);"></span> Pendência operacional — Neto/organização</span>
+    <span><span class="legend-dot" style="background:var(--verde);"></span> Já respondido</span>
+  </div>
+
+  <div class="progress-card">
+    <div class="progress-ring" id="progress-number">5/17</div>
+    <div style="flex:1;min-width:200px;">
+      <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:29%;"></div></div>
+      <div class="progress-label">itens de definição respondidos</div>
+    </div>
+  </div>
+
+  <h2 class="section-title">1. Definições de base <span class="owner-tag neto">Neto</span></h2>
+
+  <div class="item neto">
+    <div class="item-head">
+      <div class="status-dot ok"></div>
+      <div class="item-q">Quem assina a Direção Médica?</div>
+      <div class="status-tag ok">Respondido</div>
+    </div>
+    <div class="item-body">
+      <div class="answer"><strong>Dr. Rafael Gonçalves Souza</strong> — CRM-SE 4707 | RQE 5239. Assina como Direção Médica e Governança Assistencial da prova, no mesmo modelo aplicado na proposta da Maratona de Maceió 2026.</div>
+    </div>
+  </div>
+
+  <div class="item neto">
+    <div class="item-head">
+      <div class="status-dot ok"></div>
+      <div class="item-q">Identidade visual / logo</div>
+      <div class="status-tag ok">Respondido</div>
+    </div>
+    <div class="item-body">
+      <div class="answer">Será usada a identidade visual oficial da <strong>Maratona de Aracaju 2026</strong> (Instagram @maratonadearacaju). Uma eventual mudança de marca fica para um segundo estágio, a critério do Dr. Rafael.</div>
+    </div>
+  </div>
+
+  <div class="item neto">
+    <div class="item-head">
+      <div class="status-dot ok"></div>
+      <div class="item-q">Repositório e hospedagem</div>
+      <div class="status-tag ok">Respondido</div>
+    </div>
+    <div class="item-body">
+      <div class="answer">Armazenamento no GitHub — <strong>github.com/opexgrowth/Rafa</strong>. Publicação via Netlify.</div>
+    </div>
+  </div>
+
+  <h2 class="section-title">2. Local e percurso <span class="owner-tag neto">Neto</span></h2>
+
+  <div class="item neto">
+    <div class="item-head">
+      <div class="status-dot pending"></div>
+      <div class="item-q">Local de largada/chegada de cada dia e locais dos hospitais/tendas</div>
+      <div class="status-tag pending">Aguardando</div>
+    </div>
+    <div class="item-body">
+      Precisamos dos pontos exatos de largada e chegada dos dois dias, e onde ficarão o hospital de chegada e o hospital de apoio (retaguarda), no padrão HCamp / Bosque usado na MDR26.
+    </div>
+  </div>
+
+  <div class="item neto">
+    <div class="item-head">
+      <div class="status-dot ok"></div>
+      <div class="item-q">Percurso (GPX) — recebido</div>
+      <div class="status-tag ok">Recebido</div>
+    </div>
+    <div class="item-body answer">
+      Arquivos GPX oficiais dos 4 percursos (5km, 10km, 21km e 42,195km) recebidos e já carregados no plano de governança, com mapas interativos reais (traçado sobre OpenStreetMap) na seção "Mapas dos Percursos Oficiais". Os 4 percursos compartilham o mesmo ponto de largada/chegada, na Orla de Atalaia, próximo à Marina.
+      <div class="known-box">
+        <strong>Já sabemos pelo regulamento:</strong> pontos de corte da Maratona (42,195km) no Km 15 (Rod. Des. Antônio Xavier de Assis Júnior), Km 25 (Av. Gov. Paulo Barreto de Menezes, em frente à Embrapa) e Km 32 (Av. Santos Dumont, em frente ao Hotel Celi).
+      </div>
+    </div>
+  </div>
+
+  <div class="item neto">
+    <div class="item-head">
+      <div class="status-dot pending"></div>
+      <div class="item-q">Plantas baixas e rota de fuga das ambulâncias</div>
+      <div class="status-tag pending">Aguardando (Neto vai enviar)</div>
+    </div>
+    <div class="item-body">
+      Plantas baixas das estruturas médicas (hospital de chegada, hospital de apoio, postos) e rota de fuga das ambulâncias (acesso de emergência independente do fluxo de atletas), para sobrepor nos mapas já construídos.
+    </div>
+  </div>
+
+  <h2 class="section-title">3. Números que dimensionam a operação <span class="owner-tag neto">Neto</span></h2>
+
+  <div class="item neto">
+    <div class="item-head">
+      <div class="status-dot pending"></div>
+      <div class="item-q">Meta de inscritos por prova</div>
+      <div class="status-tag pending">Aguardando</div>
+    </div>
+    <div class="item-body">Meta de inscritos para 5km, 10km, 21km e 42,195km, e total esperado por dia (31/10 e 01/11).</div>
+  </div>
+
+  <div class="item neto">
+    <div class="item-head">
+      <div class="status-dot pending"></div>
+      <div class="item-q">Ambulâncias, tendas e postos de hidratação contratados</div>
+      <div class="status-tag pending">Aguardando</div>
+    </div>
+    <div class="item-body">
+      Quantidade de ambulâncias/UTI, tendas de posto de ajuda e postos de hidratação já contratados ou orçados.
+      <div class="known-box"><strong>Já sabemos pelo regulamento:</strong> hidratação a cada 2km do percurso (§55).</div>
+    </div>
+  </div>
+
+  <div class="item neto">
+    <div class="item-head">
+      <div class="status-dot pending"></div>
+      <div class="item-q">Hospital / tenda de chegada fixo</div>
+      <div class="status-tag pending">Aguardando</div>
+    </div>
+    <div class="item-body">Existe estrutura fixa prevista para a linha de chegada (modelo HCamp da MDR26)? Qual o porte previsto?</div>
+  </div>
+
+  <h2 class="section-title">4. Rede de atendimento <span class="owner-tag neto">Neto</span></h2>
+
+  <div class="item neto">
+    <div class="item-head">
+      <div class="status-dot pending"></div>
+      <div class="item-q">Hospitais de retaguarda, SAMU, Bombeiros, Defesa Civil/SMTT</div>
+      <div class="status-tag pending">Aguardando</div>
+    </div>
+    <div class="item-body">Nomes, endereços e telefones dos hospitais de retaguarda e órgãos de apoio a articular.</div>
+  </div>
+
+  <h2 class="section-title">5. Definições técnicas e clínicas <span class="owner-tag rafael">Dr. Rafael</span></h2>
+
+  <div class="item rafael">
+    <div class="item-head">
+      <div class="status-dot pending"></div>
+      <div class="item-q">Protocolos clínicos de resposta</div>
+      <div class="status-tag pending">Aguardando validação</div>
+    </div>
+    <div class="item-body">
+      Fluxo específico que o Dr. Rafael quer adotar para: parada cardíaca/morte súbita, golpe de calor por esforço, hiponatremia associada ao exercício, colapso pós-prova e incidente com múltiplas vítimas. O rascunho atual do site usa o modelo genérico da MDR26 como referência, mas precisa da validação/ajuste médico dele antes de ser publicado como protocolo oficial da prova.
+    </div>
+  </div>
+
+  <div class="item rafael">
+    <div class="item-head">
+      <div class="status-dot pending"></div>
+      <div class="item-q">Ponto de corte da Meia Maratona (21km)</div>
+      <div class="status-tag pending">Aguardando</div>
+    </div>
+    <div class="item-body">
+      O regulamento cita 1 ponto de corte na prova de 21km, mas não especifica local nem tempo. Decisão técnica de segurança/percurso.
+    </div>
+  </div>
+
+  <div class="item rafael">
+    <div class="item-head">
+      <div class="status-dot pending"></div>
+      <div class="item-q">Dimensionamento de equipe médica por função e dia</div>
+      <div class="status-tag pending">Aguardando</div>
+    </div>
+    <div class="item-body">
+      Quantos médicos, enfermeiros, socorristas, fisioterapeutas e moto-socorristas por dia de operação — cálculo técnico com base no número de inscritos e porte da prova (modelo de tabela "Equipe da Área Médica" da MDR26 como referência).
+    </div>
+  </div>
+
+  <div class="item rafael">
+    <div class="item-head">
+      <div class="status-dot pending"></div>
+      <div class="item-q">Central de remoções — estrutura e telefone único</div>
+      <div class="status-tag pending">Aguardando</div>
+    </div>
+    <div class="item-body">Decisão operacional de comando médico: telefone único de emergência da prova (equivalente ao "(21) 96673-4240" da MDR26) e fluxo de acionamento.</div>
+  </div>
+
+  <div class="item rafael">
+    <div class="item-head">
+      <div class="status-dot pending"></div>
+      <div class="item-q">Validação do modelo MDR26 para o porte da Maratona de Aracaju</div>
+      <div class="status-tag pending">Aguardando</div>
+    </div>
+    <div class="item-body">A MDR26 (Maratona do Rio) é uma prova de porte muito maior. O Dr. Rafael precisa validar quais estruturas do modelo se aplicam integralmente e quais devem ser redimensionadas para o porte da prova em Aracaju.</div>
+  </div>
+
+  <h2 class="section-title">6. Equipe e cronograma <span class="owner-tag neto">Neto</span></h2>
+
+  <div class="item neto">
+    <div class="item-head">
+      <div class="status-dot pending"></div>
+      <div class="item-q">Cronograma de montagem</div>
+      <div class="status-tag pending">Aguardando</div>
+    </div>
+    <div class="item-body">
+      Confirmar se a montagem da estrutura médica acompanha os dias de entrega de kits.
+      <div class="known-box"><strong>Já sabemos pelo regulamento:</strong> entrega de kits nos dias 28/10, 29/10, 30/10 (10h–22h) e 31/10 (10h–20h), local a definir.</div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Informações já confirmadas (regulamento)</h2>
+
+  <div class="item">
+    <div class="item-head">
+      <div class="status-dot ok"></div>
+      <div class="item-q">Datas, distâncias e horários de largada</div>
+      <div class="status-tag ok">Da fonte oficial</div>
+    </div>
+    <div class="item-body">
+      <table class="data-table">
+        <tr><th>Data</th><th>Prova</th><th>Largada</th></tr>
+        <tr><td>31/10/2026</td><td>21km</td><td>04:30</td></tr>
+        <tr><td>31/10/2026</td><td>10km</td><td>05:00</td></tr>
+        <tr><td>01/11/2026</td><td>42,195km</td><td>04:00</td></tr>
+        <tr><td>01/11/2026</td><td>5km</td><td>05:00</td></tr>
+      </table>
+      <div class="known-box">Durações máximas: 5km e 10km até 60/90min; 21km até 3h30; 42,195km até 6h. Atletas fora do tempo são convidados a embarcar no ônibus de recolhimento.</div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Pontos a corrigir antes de publicar (achados na revisão do regulamento)</h2>
+
+  <div class="item">
+    <div class="item-head">
+      <div class="status-dot blocked"></div>
+      <div class="item-q">Inconsistências no texto do regulamento atual</div>
+      <div class="status-tag pending">Para revisão</div>
+    </div>
+    <div class="item-body">
+      <div class="flag-box">
+        • Menciona "prova de 15km" na premiação por faixa etária (parágrafo único, item Importante) e "2025" nos lotes do kit 42,195km — parecem resíduo de um regulamento anterior.<br><br>
+        • O trecho sobre o pelotão de Elite (masculino/feminino) aparece duplicado: §3/§6 e §4/§7 trazem os mesmos critérios com redação repetida.
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Gerado a partir do Regulamento Oficial da Maratona de Aracaju 2026, da Proposta de Direção Médica (Maceió 2026) e da Apresentação de Área Médica MDR26, como base de estruturação.<br>
+    <strong>Atualizado conforme as respostas chegam.</strong>
+    <div class="layout-lock">
+      🔧 <strong>Dr. Rafael:</strong> para responder qualquer pendência marcada acima, envie a resposta diretamente ao Neto (WhatsApp/mensagem) — a página é atualizada a partir daí. Se quiser sugerir alguma mudança de layout ou estrutura da página, também é só falar com o Neto.
+    </div>
+  </div>
+
+</div>
+
+</div><!-- /content -->
+
+<script>
+  // Senha simples client-side — não é segurança forte, apenas evita acesso casual.
+  // Trocar a senha: edite a constante SITE_PWD abaixo.
+  const SITE_PWD = "aracaju2026";
+
+  function checkPwd(){
+    const val = document.getElementById('pwd').value;
+    if(val === SITE_PWD){
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+      try{ sessionStorage.setItem('gate_ok','1'); }catch(e){}
+    } else {
+      document.getElementById('err').style.display = 'block';
+    }
+  }
+  document.getElementById('pwd').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') checkPwd();
+  });
+  try{
+    if(sessionStorage.getItem('gate_ok') === '1'){
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+    }
+  }catch(e){}
+</script>
+
+</body>
+</html>
